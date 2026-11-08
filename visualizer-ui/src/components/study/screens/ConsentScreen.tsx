@@ -150,7 +150,7 @@ export default function ConsentScreen() {
                 "Participation is completely voluntary. You may withdraw at any time with no penalty.",
                 "Minimal risk. No audio or video recordings are collected.",
                 "You are assigned an anonymous participant ID. Data is kept confidential and reported only in aggregate.",
-                "No compensation and no financial obligation for taking part.",
+                "You receive a $10 Amazon gift card for completing the study, at no cost to take part.",
                 "Your choice will not affect your grades, academic standing, or relationship with Kean University.",
               ].map((point, i) => (
                 <li key={i} className="flex items-start gap-2.5">

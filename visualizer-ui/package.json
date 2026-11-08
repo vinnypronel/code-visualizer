@@ -12,6 +12,7 @@
     "db:smoke": "node scripts/smoke-study-database.mjs"
   },
   "dependencies": {
+    "@google/genai": "^2.32.0",
     "@monaco-editor/react": "^4.7.0",
     "framer-motion": "^12.40.0",
     "lenis": "^1.3.26",

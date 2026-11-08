@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { GoogleGenAI } from "@google/genai";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -32,12 +33,24 @@ function loadEnvLocal() {
 
 loadEnvLocal();
 
-const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
-if (!API_KEY || API_KEY === "your-gemini-api-key") {
-  console.error("Set GEMINI_API_KEY in .env.local first (see .env.example).");
+// Vertex AI (the lab's funded project), matching the runtime setup. Auth is the
+// service account via GOOGLE_APPLICATION_CREDENTIALS (a path to the JSON) in
+// .env.local, or GEMINI_SERVICE_ACCOUNT_JSON (the JSON as a string).
+const PROJECT = process.env.GEMINI_PROJECT;
+const LOCATION = process.env.GEMINI_LOCATION || "us-central1";
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+if (!PROJECT || PROJECT === "gen-lang-client-xxxxxxxxxx") {
+  console.error("Set GEMINI_PROJECT and the service-account credentials in .env.local (see .env.example).");
   process.exit(1);
 }
+
+const saJson = process.env.GEMINI_SERVICE_ACCOUNT_JSON;
+const ai = new GoogleGenAI({
+  vertexai: true,
+  project: PROJECT,
+  location: LOCATION,
+  googleAuthOptions: saJson ? { credentials: JSON.parse(saJson) } : undefined,
+});
 
 const seed = JSON.parse(readFileSync(join(here, "aiExplanationSeed.json"), "utf8"));
 const only = process.argv[2];
@@ -66,24 +79,16 @@ function buildPrompt(lesson, stepIndex) {
 }
 
 async function generateStep(lesson, stepIndex) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: buildPrompt(lesson, stepIndex) }] }],
-      generationConfig: {
-        temperature: 0.4,
-        responseMimeType: "application/json",
-      },
-    }),
+  const response = await ai.models.generateContent({
+    model: MODEL,
+    contents: buildPrompt(lesson, stepIndex),
+    config: {
+      temperature: 0.4,
+      responseMimeType: "application/json",
+    },
   });
-  if (!res.ok) {
-    throw new Error(`Gemini ${res.status}: ${await res.text()}`);
-  }
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error(`No text in response: ${JSON.stringify(data).slice(0, 300)}`);
+  const text = response.text?.trim();
+  if (!text) throw new Error("No text in Gemini response");
   const parsed = JSON.parse(text);
   if (typeof parsed.explanation !== "string" || typeof parsed.whyItMatters !== "string") {
     throw new Error(`Unexpected shape: ${text.slice(0, 300)}`);

@@ -1,14 +1,16 @@
--- Enrollment cap: 20 COMPLETED sessions per condition (40 total).
+-- Enrollment cap: 30 COMPLETED sessions per condition (60 total, the IRB max).
+-- The team aims for 40 (20 per group) first and can recruit up to 60.
 --
--- "Completed" = the participant reached the end of the post-test
--- (posttest_finished_at is set). People who start but quit before that do not
--- count, so later participants naturally replace them until each condition has
--- 20 finishers. An "active window" keeps very recent in-progress sessions in the
--- balance so we don't over-assign one condition while several people are still
--- mid-session; sessions older than that window with no finish are treated as
--- abandoned and free their slot.
+-- "Completed" = the participant finished the questionnaire
+-- (questionnaire_finished_at is set, which the researcher reconciles from the
+-- external form). People who start but do not finish do not count, so later
+-- participants naturally replace them until each condition has 30 finishers. An
+-- "active window" keeps very recent in-progress sessions in the balance so we
+-- don't over-assign one condition while several people are still mid-session;
+-- sessions older than that window with no finish are treated as abandoned and
+-- free their slot.
 --
--- When both conditions have 20 completed, assignment raises 'study full'
+-- When both conditions have 30 completed, assignment raises 'study full'
 -- (sqlstate 57014) and the API turns that into a friendly closed-study screen.
 
 create or replace function public.assign_participant(
@@ -36,7 +38,7 @@ declare
   v_static_done integer;
   v_ai_load integer;
   v_static_load integer;
-  v_target constant integer := 20;
+  v_target constant integer := 30;
   v_active_window constant interval := interval '3 hours';
 begin
   if p_session_token is null or p_session_token !~
@@ -68,12 +70,12 @@ begin
   perform pg_advisory_xact_lock(hashtextextended('assign_participant_counts', 0));
 
   select
-    count(*) filter (where condition = 'ai' and posttest_finished_at is not null),
-    count(*) filter (where condition = 'static' and posttest_finished_at is not null),
+    count(*) filter (where condition = 'ai' and questionnaire_finished_at is not null),
+    count(*) filter (where condition = 'static' and questionnaire_finished_at is not null),
     count(*) filter (where condition = 'ai'
-      and (posttest_finished_at is not null or created_at > now() - v_active_window)),
+      and (questionnaire_finished_at is not null or created_at > now() - v_active_window)),
     count(*) filter (where condition = 'static'
-      and (posttest_finished_at is not null or created_at > now() - v_active_window))
+      and (questionnaire_finished_at is not null or created_at > now() - v_active_window))
   into v_ai_done, v_static_done, v_ai_load, v_static_load
   from public.sessions;
 
@@ -145,8 +147,8 @@ set search_path = public
 as $$
   select
     c as condition,
-    count(*) filter (where s.condition = c and s.posttest_finished_at is not null)::int as completed,
-    count(*) filter (where s.condition = c and s.posttest_finished_at is null)::int as in_progress
+    count(*) filter (where s.condition = c and s.questionnaire_finished_at is not null)::int as completed,
+    count(*) filter (where s.condition = c and s.questionnaire_finished_at is null)::int as in_progress
   from (values ('ai'), ('static')) as conditions(c)
   left join public.sessions s on s.condition = conditions.c
   group by c

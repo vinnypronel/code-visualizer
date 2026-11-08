@@ -52,11 +52,14 @@ export const SHOW_PRESET_SELECTOR = true;
 export const STUDY_LESSON_IDS: readonly string[] = ["linkedlist", "stack"];
 
 /*
- * Target completed sessions per condition (20 ai + 20 static = 40). Enforced in
+ * Hard cap per condition: the IRB-approved maximum (30 ai + 30 static = 60).
+ * The team aims for 40 (20 per group) first and can recruit up to 60 if some
+ * data is unusable, so the software stops at 30 per group, not 20. A "completed"
+ * session is one where the participant finished the questionnaire. Enforced in
  * the database (assign_participant, migration 0005); this constant is for the
- * admin dashboard display only, so keep the two in sync if the target changes.
+ * admin dashboard display only, so keep the two in sync if the cap changes.
  */
-export const ENROLLMENT_TARGET_PER_CONDITION = 20;
+export const ENROLLMENT_TARGET_PER_CONDITION = 30;
 
 /* Development-only escape hatches must remain unavailable to participants. */
 const SHOW_DEVELOPER_LESSON_TOOLS = process.env.NODE_ENV !== "production";
@@ -126,3 +129,10 @@ export const DEV_THANK_YOU_EVENT = "visualizer:dev-show-thank-you";
 
 /* External Microsoft Forms questionnaire URL. Public link, safe for browser. */
 export const MSFORMS_URL = process.env.NEXT_PUBLIC_MSFORMS_URL ?? "";
+
+/*
+ * External Microsoft Forms gift-card form, shown after the questionnaire. It
+ * only collects an email to send the $10 gift card and is never linked to the
+ * participant ID or study responses. Hidden until this URL is set.
+ */
+export const GIFTCARD_URL = process.env.NEXT_PUBLIC_GIFTCARD_URL ?? "";

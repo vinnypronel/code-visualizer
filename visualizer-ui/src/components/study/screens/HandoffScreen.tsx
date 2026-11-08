@@ -18,6 +18,7 @@ import {
   DEV_THANK_YOU_EVENT,
   DEV_THANK_YOU_STORAGE_KEY,
   MSFORMS_URL,
+  GIFTCARD_URL,
   QUESTIONNAIRE_MINUTES,
   LESSON_PRESET_ID,
 } from "@/lib/studyConfig";
@@ -197,6 +198,29 @@ export default function HandoffScreen() {
               </button>
             </div>
           </div>
+
+          {GIFTCARD_URL && (
+            <div
+              className="mb-6 rounded-lg border px-5 py-4"
+              style={{ background: "var(--bg-panel)", borderColor: "var(--border)" }}
+            >
+              <p className="mb-2 text-[13.5px] font-semibold" style={{ color: "var(--text-primary)" }}>
+                After you submit the questionnaire, claim your $10 Amazon gift card
+              </p>
+              <p className="mb-3 text-[12.5px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                The form only asks for an email to send the gift card. It is not
+                linked to your participant ID or your study responses.
+              </p>
+              <a
+                href={GIFTCARD_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex text-xs py-2 px-5"
+              >
+                Claim gift card
+              </a>
+            </div>
+          )}
 
           <p
             className="mb-6 text-[12.5px] leading-relaxed"

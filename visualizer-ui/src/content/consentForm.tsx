@@ -5,7 +5,7 @@
 
 export const CONSENT_META = {
   irbProtocol: "IRB Protocol #: IRB-FY2026-314",
-  version: "Version 1.0 | 7/1/26 | Kean University",
+  version: "Version 1.0 | Kean University",
   title: "INFORMED CONSENT FORM",
 } as const;
 
@@ -276,7 +276,14 @@ export function ConsentBody() {
 
       <Section title="viii) Compensation">
         <p>
-          <Bold>No compensation</Bold> is offered for participation in this study.
+          Participants who <Bold>complete the study</Bold> will receive a{" "}
+          <Highlight variant="green">$10 digital Amazon gift card</Highlight> as
+          compensation for their time and effort. At the end of the session, you
+          will be asked to enter your email address in a <Bold>separate form</Bold>,
+          which is used only to send your gift card. This form is{" "}
+          <Highlight variant="green">not linked to your study responses</Highlight>.
+          If you withdraw before completing the study, you will not receive the
+          gift card.
         </p>
       </Section>
 
@@ -291,6 +298,11 @@ export function ConsentBody() {
           <li>
             Pre-test, post-test, and questionnaire responses will be{" "}
             <Bold>stored under your participant ID only</Bold>.
+          </li>
+          <li>
+            If you provide your email address to receive the gift card, it will be{" "}
+            <Highlight variant="green">stored separately from your study responses</Highlight>{" "}
+            and will never be linked to your participant ID.
           </li>
           <li>
             All data will be kept in{" "}
