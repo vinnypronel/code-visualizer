@@ -30,6 +30,8 @@ import type {
   TestResponses,
 } from "@/lib/studyTypes";
 import UnsavedResponsesNotice from "./UnsavedResponsesNotice";
+import DemoModeBanner from "./DemoModeBanner";
+import { DEMO_MODE, DEMO_PARTICIPANT_ID } from "@/lib/demoMode";
 
 /*
  * One queued POST body plus the bookkeeping the outbox needs. `critical` is
@@ -139,6 +141,27 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const acceptConsent = useCallback(async (turnstileToken?: string) => {
+    /*
+     * Demo mode stops here: no participant ID is minted, so a local
+     * walkthrough never writes to Supabase and never spends a participant
+     * number. sessionToken stays null, which also makes every logEvent a
+     * no-op. Ignored in production builds (see lib/demoMode.ts).
+     */
+    if (DEMO_MODE) {
+      setAssignError(null);
+      setStudyFull(false);
+      setSession((s) => ({
+        ...s,
+        phase: "assigned",
+        participantId: DEMO_PARTICIPANT_ID,
+        sessionToken: null,
+        assignmentRequestId: null,
+        seq: null,
+        condition: s.condition ?? "ai",
+      }));
+      return;
+    }
+
     if (turnstileToken) assignmentChallengeRef.current = turnstileToken;
     const assignmentRequestId = sessionRef.current.assignmentRequestId ?? makeUuid();
     const sessionToken = sessionRef.current.sessionToken ?? makeUuid();
@@ -394,6 +417,7 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
   return (
     <StudyContext.Provider value={value}>
       {children}
+      <DemoModeBanner />
       <UnsavedResponsesNotice />
     </StudyContext.Provider>
   );

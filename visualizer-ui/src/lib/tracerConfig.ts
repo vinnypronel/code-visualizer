@@ -18,13 +18,17 @@
 export const ALLOW_CODE_EXECUTION = process.env.NODE_ENV !== "production";
 
 /*
- * The system default java on this machine is Java 8, which cannot load the
- * traceprinter classes (they are compiled to class file version 65, meaning
- * Java 21). The absolute path is therefore the default rather than bare "java".
- * Override with JAVA_BIN if your JDK lives elsewhere.
+ * The system default java on the Windows dev machine is Java 8, which cannot
+ * load the traceprinter classes (they are compiled to class file version 65,
+ * meaning Java 21), so the JDK 21 path is the default there. On macOS and
+ * Linux the default is bare "java" from PATH, since a hardcoded Windows path
+ * can never resolve. Override with JAVA_BIN if your JDK 21 lives elsewhere.
  */
 export const JAVA_BIN =
-  process.env.JAVA_BIN ?? "C:\\Program Files\\Java\\jdk-21\\bin\\java.exe";
+  process.env.JAVA_BIN ??
+  (process.platform === "win32"
+    ? "C:\\Program Files\\Java\\jdk-21\\bin\\java.exe"
+    : "java");
 
 /*
  * Directory holding java_jail. The tracer must run with this as its working

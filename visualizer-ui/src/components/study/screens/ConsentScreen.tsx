@@ -7,6 +7,7 @@ import { useStudy } from "@/components/study/StudyProvider";
 import { ConsentBody, CONSENT_META } from "@/content/consentForm";
 import AssignmentChallenge from "@/components/study/AssignmentChallenge";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
+import { DEMO_MODE } from "@/lib/demoMode";
 
 export default function ConsentScreen() {
   const { acceptConsent, declineConsent, isAssigning, assignError, studyFull } = useStudy();
@@ -21,7 +22,12 @@ export default function ConsentScreen() {
   // Inertial smooth scrolling for the consent text box.
   useSmoothScroll(consentScrollRef);
 
-  const challengeRequired = process.env.NODE_ENV === "production" || Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  /* Demo runs skip the challenge: Turnstile site keys are domain-bound and
+   * generally do not validate on localhost, which would otherwise leave a
+   * local reviewer stuck on the consent screen. */
+  const challengeRequired =
+    !DEMO_MODE &&
+    (process.env.NODE_ENV === "production" || Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY));
   const challengePassed = !challengeRequired || (challengeReady && Boolean(challengeToken));
   const handleChallenge = useCallback((token: string | null) => setChallengeToken(token), []);
   const handleChallengeReady = useCallback((ready: boolean) => setChallengeReady(ready), []);
