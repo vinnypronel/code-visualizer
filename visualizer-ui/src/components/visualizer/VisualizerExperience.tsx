@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Check, ChevronDown, Compass } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import AiExplanationPanel from "@/components/AiExplanationPanel";
+import LiveExplanationPanel from "@/components/LiveExplanationPanel";
 import OnboardingTour from "@/components/OnboardingTour";
 import InteractiveWalkthrough from "@/components/InteractiveWalkthrough";
 import PostLessonExplorerModal from "@/components/visualizer/PostLessonExplorerModal";
@@ -1669,7 +1669,7 @@ function LessonIntro({
     <section className="lesson-intro">
       <div className="lesson-intro-inner">
         <div className="lesson-kicker">Guided Java Lesson: Code Visualizer</div>
-        {SHOW_PRESET_SELECTOR && allowPresetSelection && (
+        {SHOW_PRESET_SELECTOR && allowPresetSelection && presets.length > 1 && (
           <div className="lesson-example-select">
             <span>Choose your lesson</span>
             <LessonCustomDropdown preset={preset} presets={presets} onPresetChange={onPresetChange} />
@@ -2513,7 +2513,10 @@ export default function VisualizerExperience({
 
       {/* No key remount here: the panel keeps its own collapse choice across steps
         * and handles the ready to result transition internally. */}
-      <AiExplanationPanel
+      <LiveExplanationPanel
+        preset={activePreset}
+        stepIndex={focusStepIndex}
+        enabled={!isCustomCode}
         explanation={stepExplanation}
         diagram={stepDiagram}
         currentStep={lessonStep}
@@ -2521,7 +2524,6 @@ export default function VisualizerExperience({
         showResult={showResult}
         readyPrompt={isCustomCode ? "Watch the Variables and Objects areas for the marked change." : getReadyPrompt(presetId, lessonStep)}
         whyItMatters={isCustomCode ? stepDiagram.description : getWhyItMatters(presetId, focusStepIndex, stepDiagram.description)}
-        isAiGenerated={!isCustomCode && Boolean(getAiExplanation(presetId, focusStepIndex))}
       />
 
       {isTourOpen && (

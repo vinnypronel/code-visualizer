@@ -142,6 +142,17 @@ export default function ConsentScreen() {
             <p className="text-[12px] text-slate-600 mb-3">
               A quick summary of the consent form. Please still read the full form on the left before deciding.
             </p>
+            <div
+              className="mb-3 rounded-lg px-3 py-2.5 flex items-center gap-2.5"
+              style={{ background: "#ecfdf5", border: "1.5px solid #059669" }}
+            >
+              <svg className="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+              </svg>
+              <div className="text-[12.5px] text-emerald-950 leading-snug">
+                <span className="font-bold">$10 Amazon gift card</span> for completing the study, at no cost to take part.
+              </div>
+            </div>
             <ul className="space-y-2.5 text-[12.5px] text-slate-700">
               {[
                 "Takes about 45 minutes, completed entirely online at a time and place of your choosing.",
@@ -150,7 +161,6 @@ export default function ConsentScreen() {
                 "Participation is completely voluntary. You may withdraw at any time with no penalty.",
                 "Minimal risk. No audio or video recordings are collected.",
                 "You are assigned an anonymous participant ID. Data is kept confidential and reported only in aggregate.",
-                "You receive a $10 Amazon gift card for completing the study, at no cost to take part.",
                 "Your choice will not affect your grades, academic standing, or relationship with Kean University.",
               ].map((point, i) => (
                 <li key={i} className="flex items-start gap-2.5">

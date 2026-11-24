@@ -46,7 +46,6 @@ const PHASES: DevDestination[] = [
 ];
 
 export default function DevJumpBar() {
-  return null;
   const { session, devJump } = useStudy();
   const [open, setOpen] = useState(false);
   const [handoffView, setHandoffView] = useState<"thankyou" | null>(null);

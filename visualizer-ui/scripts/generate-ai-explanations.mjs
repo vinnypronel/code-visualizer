@@ -33,24 +33,31 @@ function loadEnvLocal() {
 
 loadEnvLocal();
 
-// Vertex AI (the lab's funded project), matching the runtime setup. Auth is the
-// service account via GOOGLE_APPLICATION_CREDENTIALS (a path to the JSON) in
-// .env.local, or GEMINI_SERVICE_ACCOUNT_JSON (the JSON as a string).
-const PROJECT = process.env.GEMINI_PROJECT;
-const LOCATION = process.env.GEMINI_LOCATION || "us-central1";
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-if (!PROJECT || PROJECT === "gen-lang-client-xxxxxxxxxx") {
-  console.error("Set GEMINI_PROJECT and the service-account credentials in .env.local (see .env.example).");
-  process.exit(1);
-}
+// Two ways to auth, whichever is set in .env.local:
+//   GEMINI_API_KEY  -> simple API-key path (free tier covers this one-time job)
+//   GEMINI_PROJECT  -> Vertex AI via the service account (GOOGLE_APPLICATION_
+//                      CREDENTIALS path, or GEMINI_SERVICE_ACCOUNT_JSON string)
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const API_KEY = process.env.GEMINI_API_KEY;
 
-const saJson = process.env.GEMINI_SERVICE_ACCOUNT_JSON;
-const ai = new GoogleGenAI({
-  vertexai: true,
-  project: PROJECT,
-  location: LOCATION,
-  googleAuthOptions: saJson ? { credentials: JSON.parse(saJson) } : undefined,
-});
+let ai;
+if (API_KEY && API_KEY !== "your-gemini-api-key") {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+} else {
+  const PROJECT = process.env.GEMINI_PROJECT;
+  const LOCATION = process.env.GEMINI_LOCATION || "us-central1";
+  if (!PROJECT || PROJECT === "gen-lang-client-xxxxxxxxxx") {
+    console.error("Set GEMINI_API_KEY, or GEMINI_PROJECT plus service-account credentials, in .env.local (see .env.example).");
+    process.exit(1);
+  }
+  const saJson = process.env.GEMINI_SERVICE_ACCOUNT_JSON;
+  ai = new GoogleGenAI({
+    vertexai: true,
+    project: PROJECT,
+    location: LOCATION,
+    googleAuthOptions: saJson ? { credentials: JSON.parse(saJson) } : undefined,
+  });
+}
 
 const seed = JSON.parse(readFileSync(join(here, "aiExplanationSeed.json"), "utf8"));
 const only = process.argv[2];

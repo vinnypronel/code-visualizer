@@ -44,12 +44,12 @@ export const LESSON_PRESET_ID = "linkedlist";
 export const SHOW_PRESET_SELECTOR = true;
 
 /*
- * The only lessons a study participant can pick or switch to. Stack and linked
- * list both teach reference/aliasing, which is what the pre/post test measures.
- * Array list and live trace still exist as presets but are kept out of the
- * study so everyone learns the same concept the test checks.
+ * The only lesson a study participant uses. Linked list teaches reference/
+ * aliasing, which is exactly what the pre/post test measures, so every AI-group
+ * participant gets the same lesson (no content confound). Stack, array list, and
+ * live trace still exist as presets but are kept out of the study.
  */
-export const STUDY_LESSON_IDS: readonly string[] = ["linkedlist", "stack"];
+export const STUDY_LESSON_IDS: readonly string[] = ["linkedlist"];
 
 /*
  * Hard cap per condition: the IRB-approved maximum (30 ai + 30 static = 60).
