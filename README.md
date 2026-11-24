@@ -50,8 +50,8 @@ Works on macOS, Windows, and Linux. No Java or local database is needed for the
 study app (Supabase is hosted).
 
 **Prerequisites:** Node.js 20 or newer (LTS) with npm, and a `.env.local` file
-from Vinny (it holds the Supabase, Turnstile, and Gemini keys and is not in the
-repo).
+from Vinny (it is not in the repo). Which keys that file needs depends on how
+you are running the app, below.
 
 ```bash
 git clone https://github.com/vinnypronel/code-visualizer.git
@@ -61,8 +61,39 @@ npm install
 npm run dev
 ```
 
+No git on your machine? Use the green **Code** button on the repository page,
+then **Download ZIP**, and unzip it instead of cloning.
+
 Open http://localhost:3000. If the port is taken, Next.js picks another one and
 prints it. To run a production build instead: `npm run build && npm start`.
+
+### Demo mode: looking at the app without touching study data
+
+Anyone reviewing the app (mentor, collaborator, new team member) should run it
+in demo mode. Put this in `.env.local` and nothing else is required:
+
+```
+NEXT_PUBLIC_DEMO_MODE=1
+```
+
+With that set, in a `npm run dev` run:
+
+- the consent screen needs no Cloudflare verification, so it works on localhost
+  with no Turnstile keys;
+- agreeing to the consent form mints **no** participant ID. Nothing is written
+  to Supabase, and nothing counts against the enrollment cap. The ID on screen
+  reads `DEMO`;
+- every screen carries a banner saying nothing is being saved;
+- for the live AI explanations, add `GEMINI_API_KEY=...` as well. Without it the
+  lesson falls back to its scripted explanation text and still works.
+
+The flag is ignored in production builds, so it cannot affect the deployed
+study at code-visualizer-alpha.vercel.app.
+
+Running with the full `.env.local` (Supabase, Turnstile, Gemini) means the app
+behaves exactly as it does for a participant: agreeing to consent writes a real
+row and spends a real participant number. Use the full key set only when you
+mean to test the live pipeline.
 
 ### Using the app
 
