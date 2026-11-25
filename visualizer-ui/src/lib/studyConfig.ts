@@ -133,6 +133,16 @@ export const MSFORMS_URL = process.env.NEXT_PUBLIC_MSFORMS_URL ?? "";
 /*
  * External Microsoft Forms gift-card form, shown after the questionnaire. It
  * only collects an email to send the $10 gift card and is never linked to the
- * participant ID or study responses. Hidden until this URL is set.
+ * participant ID or study responses.
+ *
+ * The live form is the default rather than an environment variable: the URL is
+ * public by design (it ships in the browser bundle either way), and leaving it
+ * to config is how it went missing from the deployed build once already. Set
+ * NEXT_PUBLIC_GIFTCARD_URL to point at a different form, for example a test
+ * copy. If both are empty the handoff screen falls back to a contact line, so
+ * the compensation step can never disappear silently.
  */
-export const GIFTCARD_URL = process.env.NEXT_PUBLIC_GIFTCARD_URL ?? "";
+const GIFTCARD_FORM_URL =
+  "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=VQ4Ckmp2qkuid5SiTxsRt8MO1UPBHzNBjywK9omd7IhUNk1JNEFFVDFLR1I2OUoyWUpKV044NzFNTS4u";
+
+export const GIFTCARD_URL = process.env.NEXT_PUBLIC_GIFTCARD_URL ?? GIFTCARD_FORM_URL;
