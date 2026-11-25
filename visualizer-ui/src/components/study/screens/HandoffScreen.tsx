@@ -219,6 +219,12 @@ export default function HandoffScreen() {
               >
                 Claim gift card
               </a>
+              <p className="mt-3 text-[12px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                The form asks you to sign in with your Kean account. If you see
+                an access error, your browser is signed into a personal
+                Microsoft account: open the link in a private window and sign in
+                with your Kean email.
+              </p>
             </div>
           ) : (
             /*
