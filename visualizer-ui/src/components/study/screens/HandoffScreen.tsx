@@ -199,7 +199,7 @@ export default function HandoffScreen() {
             </div>
           </div>
 
-          {GIFTCARD_URL && (
+          {GIFTCARD_URL ? (
             <div
               className="mb-6 rounded-lg border px-5 py-4"
               style={{ background: "var(--bg-panel)", borderColor: "var(--border)" }}
@@ -219,6 +219,28 @@ export default function HandoffScreen() {
               >
                 Claim gift card
               </a>
+            </div>
+          ) : (
+            /*
+             * No claim link configured. Compensation is part of the approved
+             * protocol, so the step must never disappear silently: fall back to
+             * a contact route rather than rendering nothing.
+             */
+            <div
+              className="mb-6 rounded-lg border px-5 py-4"
+              style={{ background: "var(--bg-panel)", borderColor: "var(--border)" }}
+            >
+              <p className="mb-2 text-[13.5px] font-semibold" style={{ color: "var(--text-primary)" }}>
+                Claiming your $10 Amazon gift card
+              </p>
+              <p className="text-[12.5px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                The claim form is not available right now. Email{" "}
+                <a href="mailto:yama@kean.edu" style={{ color: "var(--accent)" }}>
+                  yama@kean.edu
+                </a>{" "}
+                to receive your gift card. You do not need to send your
+                participant ID or any of your answers.
+              </p>
             </div>
           )}
 
